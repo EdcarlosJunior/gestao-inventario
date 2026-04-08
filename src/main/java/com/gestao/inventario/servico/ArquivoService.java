@@ -57,4 +57,11 @@ public class ArquivoService {
         }
         return maiorId + 1; // O próximo será o maior encontrado + 1
     }
+    public List<Produto> buscarPorNome(String termoBusca) {
+        List<Produto> todos = lerProdutos();
+        // Filtra a lista: converte tudo para minúsculas para a busca não diferenciar "A" de "a"
+        return todos.stream()
+                .filter(p -> p.getNome().toLowerCase().contains(termoBusca.toLowerCase()))
+                .toList();
+    }
 }

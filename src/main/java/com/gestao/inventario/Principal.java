@@ -4,64 +4,125 @@ import java.math.BigDecimal;
 import java.util.Scanner; // Novo import para ler o teclado
 import com.gestao.inventario.modelo.Produto;
 import com.gestao.inventario.servico.ArquivoService;
+import java.util.List;
 
 public class Principal {
+    public static void main(String[] args) {
+        Scanner teclado = new Scanner(System.in);
+        ArquivoService arquivoService = new ArquivoService();
+        int opcao = -1;
 
-	public static void main(String[] args) {
-	    Scanner teclado = new Scanner(System.in);
-	    ArquivoService arquivoService = new ArquivoService();
-	    
-	    System.out.println("=== GESTÃO DE INVENTÁRIO (MODO PROTEGIDO) ===");
-	    
-	    // O ID continua automático e seguro
-	    int idGerado = arquivoService.obterProximoId();
-	    System.out.println("Novo Registo - ID: " + idGerado);
+        while (opcao != 0) {
+            System.out.println("\n===== GESTÃO DE ESTOQUE =====");
+            System.out.println("1 - Adicionar Produto");
+            System.out.println("2 - Listar Tudo");
+            System.out.println("3 - Pesquisar por Nome");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opção: ");
 
-	    // Variáveis para armazenar os dados validados
-	    String nome = "";
-	    BigDecimal preco = BigDecimal.ZERO;
-	    int qtd = 0;
-	    boolean entradaValida = false;
+            try {
+                opcao = Integer.parseInt(teclado.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Digite um número válido!");
+                continue;
+            }
 
-	    // Validação do Nome
-	    System.out.print("Nome do produto: ");
-	    nome = teclado.nextLine();
+            switch (opcao) {
+                case 1:
+                    adicionarNovoProduto(teclado, arquivoService);
+                    break;
+                case 2:
+                    listarProdutos(arquivoService);
+                    break;
+                case 3:
+                    pesquisarProduto(teclado, arquivoService);
+                    break;    
+                case 0:
+                	System.out.println("\nEncerrando o sistema...");
+                    // Timer decrescente de 5 segundos
+                    for (int i = 5; i > 0; i--) {
+                        System.out.print(i + "... ");
+                        try {
+                            Thread.sleep(1000); // Pausa de 1 segundo
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    limparConsole();
+                    System.out.println("Sistema encerrado com sucesso. Até logo!");
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        }
+        teclado.close();
+    }
 
-	    // Ciclo de validação do PREÇO
-	    while (!entradaValida) {
-	        try {
-	            System.out.print("Preço (use ponto para decimais, ex: 10.50): ");
-	            String input = teclado.next();
-	            preco = new BigDecimal(input);
-	            entradaValida = true; // Se chegar aqui sem erro, a entrada é válida
-	        } catch (Exception e) {
-	            System.out.println("Erro: Digite um valor numérico válido para o preço!");
-	            teclado.nextLine(); // Limpa o erro do teclado
-	        }
-	    }
+    private static void adicionarNovoProduto(Scanner teclado, ArquivoService service) {
+        int id = service.obterProximoId();
+        System.out.println("\n--- Cadastrando Produto (ID: " + id + ") ---");
+        
+        System.out.print("Nome: ");
+        String nome = teclado.nextLine();
 
-	    entradaValida = false; // Reinicia para a próxima validação
+        BigDecimal preco = BigDecimal.ZERO;
+        while (true) {
+            try {
+                System.out.print("Preço: ");
+                preco = new BigDecimal(teclado.nextLine());
+                break;
+            } catch (Exception e) {
+                System.out.println("Preço inválido! Use ponto para decimais.");
+            }
+        }
 
-	    // Ciclo de validação da QUANTIDADE
-	    while (!entradaValida) {
-	        try {
-	            System.out.print("Quantidade em stock (número inteiro): ");
-	            qtd = teclado.nextInt();
-	            entradaValida = true;
-	        } catch (Exception e) {
-	            System.out.println("Erro: Digite apenas números inteiros para a quantidade!");
-	            teclado.next(); // Limpa o erro do teclado
-	        }
-	    }
+        System.out.print("Quantidade: ");
+        int qtd = Integer.parseInt(teclado.nextLine());
 
-	    // Gravação Final
-	    Produto p = new Produto(idGerado, nome, preco, qtd);
-	    arquivoService.salvarProduto(p);
+        Produto p = new Produto(id, nome, preco, qtd);
+        service.salvarProduto(p);
+        System.out.println("Produto salvo com sucesso!");
+    }
 
-	    System.out.println("\n--- LISTAGEM ATUALIZADA ---");
-	    arquivoService.lerProdutos().forEach(prod -> 
-	        System.out.println("ID: " + prod.getId() + " | Nome: " + prod.getNome() + " | Preço: " + prod.getPreco()));
-	    
-	    teclado.close();
-	}
+    private static void listarProdutos(ArquivoService service) {
+        List<Produto> lista = service.lerProdutos();
+        System.out.println("\n--- ESTOQUE ATUAL ---");
+        if (lista.isEmpty()) {
+            System.out.println("O estoque está vazio.");
+        } else {
+            lista.forEach(p -> System.out.println(
+                "ID: " + p.getId() + " | Nome: " + p.getNome() + 
+                " | Preço: R$ " + p.getPreco() + " | Qtd: " + p.getQuantidade()
+            ));
+        }
+    }
+    private static void limparConsole() {
+        try {
+            // Comando específico para Linux (Ubuntu) e macOS
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                // No Ubuntu, isso limpa a tela do terminal
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            System.out.println("Não foi possível limpar o console.");
+        }
+    }
+    private static void pesquisarProduto(Scanner teclado, ArquivoService service) {
+        System.out.print("\nDigite o nome (ou parte dele) para pesquisar: ");
+        String termo = teclado.nextLine();
+        
+        List<Produto> resultados = service.buscarPorNome(termo);
+        
+        System.out.println("\n--- RESULTADOS DA PESQUISA ---");
+        if (resultados.isEmpty()) {
+            System.out.println("Nenhum produto encontrado com o termo: " + termo);
+        } else {
+            resultados.forEach(p -> System.out.println(
+                "ID: " + p.getId() + " | Nome: " + p.getNome() + " | Preço: R$ " + p.getPreco()
+            ));
+        }
+    }
 }

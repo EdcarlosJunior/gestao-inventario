@@ -7,7 +7,9 @@ Este é um protótipo funcional de um sistema de inventário desenvolvido em **J
 - **Persistência em CSV:** Os dados são salvos no arquivo `estoque.csv`, permitindo que as informações sejam mantidas mesmo após o fechamento do programa.
 - **Validação de Entrada:** Implementação de blocos `try-catch` para garantir que o usuário insira dados numéricos válidos (Preço e Quantidade).
 - **Listagem em Tempo Real:** Após cada inserção, o sistema lê o arquivo e exibe o estoque atualizado no console.
-
+- **Menu Interativo: Sistema:** de navegação por opções com proteção contra entradas inválidas.
+- **Busca Inteligente:** Filtro de produtos por nome (Case Insensitive).
+- **Interface de Saída:** Timer decrescente e limpeza de console ao encerrar.
 ## 2. Tecnologias Utilizadas
 - **Java JDK 17+**
 - **Maven** (Gerenciamento de dependências)

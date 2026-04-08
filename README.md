@@ -9,7 +9,9 @@ Este é um protótipo funcional de um sistema de inventário desenvolvido em **J
 - **Listagem em Tempo Real:** Após cada inserção, o sistema lê o arquivo e exibe o estoque atualizado no console.
 - **Menu Interativo: Sistema:** de navegação por opções com proteção contra entradas inválidas.
 - **Busca Inteligente:** Filtro de produtos por nome (Case Insensitive).
+- **Remover Produto:** Implementada remoção de produtos por ID.
 - **Interface de Saída:** Timer decrescente e limpeza de console ao encerrar.
+
 ## 2. Tecnologias Utilizadas
 - **Java JDK 17+**
 - **Maven** (Gerenciamento de dependências)

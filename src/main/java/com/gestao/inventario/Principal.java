@@ -17,6 +17,7 @@ public class Principal {
             System.out.println("1 - Adicionar Produto");
             System.out.println("2 - Listar Tudo");
             System.out.println("3 - Pesquisar por Nome");
+            System.out.println("4 - Remover Produto");
             System.out.println("0 - Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -36,6 +37,9 @@ public class Principal {
                     break;
                 case 3:
                     pesquisarProduto(teclado, arquivoService);
+                    break;
+                case 4:
+                    removerProduto(teclado, arquivoService);
                     break;    
                 case 0:
                 	System.out.println("\nEncerrando o sistema...");
@@ -123,6 +127,19 @@ public class Principal {
             resultados.forEach(p -> System.out.println(
                 "ID: " + p.getId() + " | Nome: " + p.getNome() + " | Preço: R$ " + p.getPreco()
             ));
+        }
+    }
+    private static void removerProduto(Scanner teclado, ArquivoService service) {
+        System.out.print("\nDigite o ID do produto que deseja remover: ");
+        try {
+            int id = Integer.parseInt(teclado.nextLine());
+            
+            // Antes de remover, vamos listar para confirmar
+            service.removerProdutoPorId(id);
+            
+            System.out.println("Processo de remoção concluído para o ID: " + id);
+        } catch (NumberFormatException e) {
+            System.out.println("Erro: Digite um número de ID válido!");
         }
     }
 }

@@ -64,4 +64,21 @@ public class ArquivoService {
                 .filter(p -> p.getNome().toLowerCase().contains(termoBusca.toLowerCase()))
                 .toList();
     }
+    public void removerProdutoPorId(int id) {
+        List<Produto> listaOriginal = lerProdutos();
+        
+        // Filtra a lista mantendo apenas quem NÃO tem o ID que queremos apagar
+        List<Produto> listaAtualizada = listaOriginal.stream()
+                .filter(p -> p.getId() != id)
+                .toList();
+
+        // Sobrescreve o arquivo com a nova lista
+        try (java.io.PrintWriter writer = new java.io.PrintWriter(new java.io.FileWriter(NOME_ARQUIVO))) {
+            for (Produto p : listaAtualizada) {
+                writer.println(p.getId() + ";" + p.getNome() + ";" + p.getPreco() + ";" + p.getQuantidade());
+            }
+        } catch (java.io.IOException e) {
+            System.out.println("Erro ao atualizar arquivo após remoção: " + e.getMessage());
+        }
+    }
 }
